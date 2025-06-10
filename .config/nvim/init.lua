@@ -598,6 +598,21 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"sylvanfranklin/omni-preview.nvim",
+		dependencies = {
+			-- Typst
+			{ "chomosuke/typst-preview.nvim", lazy = true },
+			-- CSV
+			{ "hat0uma/csvview.nvim", lazy = true },
+		},
+		opts = {},
+	},
+	{
+		"kaarmu/typst.vim",
+		ft = "typst",
+		lazy = false,
+	},
+	{
 		"stevearc/oil.nvim",
 		---@module 'oil'
 		---@type oil.SetupOpts
