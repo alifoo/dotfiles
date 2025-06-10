@@ -201,6 +201,9 @@ vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right win
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+vim.keymap.set("n", "<leader>po", ":OmniPreview start<CR>", { silent = true })
+vim.keymap.set("n", "<leader>pc", ":OmniPreview stop<CR>", { silent = true })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -598,12 +601,46 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"wallpants/github-preview.nvim",
+		cmd = { "GithubPreviewToggle" },
+		keys = { "<leader>mpt" },
+		opts = {
+			-- config goes here
+		},
+		config = function(_, opts)
+			local gpreview = require("github-preview")
+			gpreview.setup(opts)
+
+			local fns = gpreview.fns
+			vim.keymap.set("n", "<leader>mpt", fns.toggle)
+			vim.keymap.set("n", "<leader>mps", fns.single_file_toggle)
+			vim.keymap.set("n", "<leader>mpd", fns.details_tags_toggle)
+		end,
+	},
+	{
+		"toppair/peek.nvim",
+		event = { "VeryLazy" },
+		build = "deno task --quiet build:fast",
+		config = function()
+			require("peek").setup({ app = "browser" })
+			vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
+			vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
+		end,
+	},
+	{
 		"sylvanfranklin/omni-preview.nvim",
 		dependencies = {
 			-- Typst
 			{ "chomosuke/typst-preview.nvim", lazy = true },
 			-- CSV
 			{ "hat0uma/csvview.nvim", lazy = true },
+			{
+				"barrett-ruth/live-server.nvim",
+				build = "pnpm add -g live-server",
+				cmd = { "LiveServerStart", "LiveServerStop" },
+				config = true,
+			},
+			{ "laytan/cloak.nvim", lazy = true },
 		},
 		opts = {},
 	},
@@ -1072,18 +1109,12 @@ require("lazy").setup({
 		-- change the command in the config to whatever the name of that colorscheme is.
 		--
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-		"bakageddy/alduin.nvim",
-		priority = 1000, -- Make sure to load this before all the other start plugins.
+		"rebelot/kanagawa.nvim",
+		priority = 1000,
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
-			require("alduin").setup({
-				terminal_colors = true,
-			})
-
-			-- Load the colorscheme here.
-			-- Like many other themes, this one has different styles, and you could load
-			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-			vim.cmd.colorscheme("vague")
+			require("kanagawa").setup({})
+			vim.cmd.colorscheme("kanagawa")
 		end,
 	},
 	-- Lazy
