@@ -2,11 +2,11 @@
 normal = { family = "ZedMono Nerd Font", style = "Regular" }
 bold = { family = "ZedMono Nerd Font", style = "Bold" }
 italic = { family = "ZedMono Nerd Font", style = "Italic" }
-size = 12.0
+size = 20.0
 
 [[keyboard.bindings]]
 key = "B"
-mods = "Super"  # Use "Super" on Linux/Windows
+mods = "Command"  # Use "Super" on Linux/Windows
 chars = "\u0002"
 
 [general]
