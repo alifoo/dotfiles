@@ -601,23 +601,6 @@ require("lazy").setup({
 		end,
 	},
 	{
-		"wallpants/github-preview.nvim",
-		cmd = { "GithubPreviewToggle" },
-		keys = { "<leader>mpt" },
-		opts = {
-			-- config goes here
-		},
-		config = function(_, opts)
-			local gpreview = require("github-preview")
-			gpreview.setup(opts)
-
-			local fns = gpreview.fns
-			vim.keymap.set("n", "<leader>mpt", fns.toggle)
-			vim.keymap.set("n", "<leader>mps", fns.single_file_toggle)
-			vim.keymap.set("n", "<leader>mpd", fns.details_tags_toggle)
-		end,
-	},
-	{
 		"toppair/peek.nvim",
 		event = { "VeryLazy" },
 		build = "deno task --quiet build:fast",
@@ -905,7 +888,12 @@ require("lazy").setup({
 				--    https://github.com/pmizio/typescript-tools.nvim
 				--
 				-- But for many setups, the LSP (`ts_ls`) will work just fine
-				ts_ls = {},
+				-- ts_ls = {},
+				{
+					"pmizio/typescript-tools.nvim",
+					dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+					opts = {},
+				},
 				tailwindcss = {},
 				eslint = {},
 				--
@@ -998,8 +986,8 @@ require("lazy").setup({
 				-- Conform can also run multiple formatters sequentially
 				python = { "black" },
 				-- You can use 'stop_after_first' to run the first available formatter from the list
-				javascript = { "prettier" },
-				typescript = { "prettier" },
+				--javascript = { "prettier" },
+				--typescript = { "prettier" },
 			},
 		},
 	},
@@ -1103,7 +1091,10 @@ require("lazy").setup({
 			signature = { enabled = true },
 		},
 	},
-
+	{
+		"olimorris/onedarkpro.nvim",
+		priority = 1000, -- Ensure it loads first
+	},
 	{ -- You can easily change to a different colorscheme.
 		-- Change the name of the colorscheme plugin below, and then
 		-- change the command in the config to whatever the name of that colorscheme is.
@@ -1114,7 +1105,7 @@ require("lazy").setup({
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
 			require("kanagawa").setup({})
-			vim.cmd.colorscheme("kanagawa")
+			vim.cmd.colorscheme("onedark_dark")
 		end,
 	},
 	-- Lazy
