@@ -1,4 +1,4 @@
---[[
+--[[init
 
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
@@ -151,7 +151,7 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 vim.o.shiftwidth = 2
 
 -- Preview substitutions live, as you type!
@@ -173,6 +173,12 @@ vim.o.confirm = true
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
+vim.keymap.set("i", "<c-/>", "<c-o>o")
+vim.keymap.set("i", "<C-J>", 'copilot#Accept("\\<CR>")', {
+	expr = true,
+	replace_keycodes = false,
+})
+vim.g.copilot_no_tab_map = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
@@ -647,6 +653,9 @@ require("lazy").setup({
 		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
 		lazy = false,
 	},
+	{
+		"github/copilot.vim",
+	},
 
 	-- LSP Plugins
 	{
@@ -869,7 +878,38 @@ require("lazy").setup({
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
 				-- clangd = {},
-				gopls = {},
+				gopls = {
+					capabilities = capabilities,
+					settings = {
+						gopls = {
+							completeUnimported = true,
+							buildFlags = { "-tags=wireinject" }, -- Example build flag
+						},
+					},
+					on_attach = function(client, bufnr)
+						-- Your autocmd goes here!
+						if client.name == "gopls" then
+							vim.api.nvim_create_autocmd("BufWritePre", {
+								pattern = "*.go",
+								callback = function()
+									local params = vim.lsp.util.make_range_params()
+									params.context = { only = { "source.organizeImports" } }
+									local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+									for cid, res in pairs(result or {}) do
+										for _, r in pairs(res.result or {}) do
+											if r.edit then
+												local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding
+													or "utf-16"
+												vim.lsp.util.apply_workspace_edit(r.edit, enc)
+											end
+										end
+									end
+									vim.lsp.buf.format({ async = false })
+								end,
+							})
+						end
+					end,
+				},
 				pyright = {
 					settings = {
 						python = {
@@ -881,6 +921,12 @@ require("lazy").setup({
 						},
 					},
 				},
+				terraformls = {
+					on_attach = function(client, bufnr)
+						-- Disable formatter if you want to keep your 4-space indentation
+						client.server_capabilities.documentFormattingProvider = false
+					end,
+				},
 				-- rust_analyzer = {},
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				--
@@ -888,13 +934,7 @@ require("lazy").setup({
 				--    https://github.com/pmizio/typescript-tools.nvim
 				--
 				-- But for many setups, the LSP (`ts_ls`) will work just fine
-				-- ts_ls = {},
-				{
-					"pmizio/typescript-tools.nvim",
-					dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-					opts = {},
-				},
-				tailwindcss = {},
+				ts_ls = {},
 				eslint = {},
 				--
 
@@ -985,6 +1025,7 @@ require("lazy").setup({
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
 				python = { "black" },
+				go = { "goimports" },
 				-- You can use 'stop_after_first' to run the first available formatter from the list
 				--javascript = { "prettier" },
 				--typescript = { "prettier" },
@@ -1091,21 +1132,25 @@ require("lazy").setup({
 			signature = { enabled = true },
 		},
 	},
-	{
-		"olimorris/onedarkpro.nvim",
-		priority = 1000, -- Ensure it loads first
-	},
 	{ -- You can easily change to a different colorscheme.
 		-- Change the name of the colorscheme plugin below, and then
 		-- change the command in the config to whatever the name of that colorscheme is.
 		--
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-		"rebelot/kanagawa.nvim",
-		priority = 1000,
+		"folke/tokyonight.nvim",
+		priority = 1000, -- Make sure to load this before all the other start plugins.
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
-			require("kanagawa").setup({})
-			vim.cmd.colorscheme("onedark_dark")
+			require("tokyonight").setup({
+				styles = {
+					comments = { italic = false }, -- Disable italics in comments
+				},
+			})
+
+			-- Load the colorscheme here.
+			-- Like many other themes, this one has different styles, and you could load
+			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+			vim.cmd.colorscheme("tokyonight-night")
 		end,
 	},
 	-- Lazy
@@ -1117,7 +1162,6 @@ require("lazy").setup({
 			})
 		end,
 	},
-
 	-- Highlight todo, notes, etc in comments
 	{
 		"folke/todo-comments.nvim",
@@ -1181,6 +1225,7 @@ require("lazy").setup({
 				"query",
 				"vim",
 				"vimdoc",
+				"go",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
