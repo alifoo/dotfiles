@@ -209,6 +209,8 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 vim.keymap.set("n", "<leader>po", ":OmniPreview start<CR>", { silent = true })
 vim.keymap.set("n", "<leader>pc", ":OmniPreview stop<CR>", { silent = true })
+vim.keymap.set("n", "<leader>cd", ":Copilot disable", { silent = true })
+vim.keymap.set("n", "<leader>cp", ":Copilot enable", { silent = true })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
