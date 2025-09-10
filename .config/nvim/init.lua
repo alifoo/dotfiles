@@ -87,6 +87,9 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
+--
+
+vim.g.copilot_enabled = 0
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.opt.conceallevel = 1
@@ -103,7 +106,8 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
+vim.o.wrap = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = "a"
@@ -153,6 +157,15 @@ vim.o.splitbelow = true
 vim.o.list = true
 vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 vim.o.shiftwidth = 2
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c", "cpp" },
+	callback = function()
+		vim.opt.tabstop = 4
+		vim.opt.shiftwidth = 4
+		vim.opt.expandtab = true
+		vim.opt.softtabstop = 4 -- Ensures the backspace key also works with 4 spaces
+	end,
+})
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = "split"
@@ -180,6 +193,7 @@ vim.keymap.set("i", "<C-J>", 'copilot#Accept("\\<CR>")', {
 })
 vim.g.copilot_no_tab_map = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", "<C-e>", "<cmd>Oil<CR>", { desc = "Open Oil file explorer" })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
@@ -209,8 +223,8 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 vim.keymap.set("n", "<leader>po", ":OmniPreview start<CR>", { silent = true })
 vim.keymap.set("n", "<leader>pc", ":OmniPreview stop<CR>", { silent = true })
-vim.keymap.set("n", "<leader>cd", ":Copilot disable", { silent = true })
-vim.keymap.set("n", "<leader>cp", ":Copilot enable", { silent = true })
+vim.keymap.set("n", "<leader>cd", "<cmd>Copilot disable<CR>", { desc = "[C]opilot [D]isable" })
+vim.keymap.set("n", "<leader>ce", "<cmd>Copilot enable<CR>", { desc = "[C]opilot [E]nable" })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -879,7 +893,7 @@ require("lazy").setup({
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
-				-- clangd = {},
+				clangd = {},
 				gopls = {
 					capabilities = capabilities,
 					settings = {
@@ -1013,21 +1027,23 @@ require("lazy").setup({
 				-- Disable "format_on_save lsp_fallback" for languages that don't
 				-- have a well standardized coding style. You can add additional
 				-- languages here or re-enable it for the disabled ones.
-				local disable_filetypes = { c = true, cpp = true }
-				if disable_filetypes[vim.bo[bufnr].filetype] then
-					return nil
-				else
-					return {
-						timeout_ms = 500,
-						lsp_format = "fallback",
-					}
-				end
+				-- local disable_filetypes = { c = true, cpp = true }
+				-- if disable_filetypes[vim.bo[bufnr].filetype] then
+				-- return nil
+				-- else
+				return {
+					timeout_ms = 500,
+					lsp_format = "fallback",
+				}
+				-- end
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
 				python = { "black" },
 				go = { "goimports" },
+				c = { "clang-format" },
+				cpp = { "clang-format" },
 				-- You can use 'stop_after_first' to run the first available formatter from the list
 				--javascript = { "prettier" },
 				--typescript = { "prettier" },
@@ -1152,10 +1168,76 @@ require("lazy").setup({
 			-- Load the colorscheme here.
 			-- Like many other themes, this one has different styles, and you could load
 			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-			vim.cmd.colorscheme("tokyonight-night")
+			-- vim.cmd.colorscheme("tokyonight-night")
+			-- vim.cmd("colorscheme bluloco")
+			vim.cmd.colorscheme("tairiki")
 		end,
 	},
-	-- Lazy
+	-- Using lazy.nvim
+	{
+		"deparr/tairiki.nvim",
+		lazy = false,
+		priority = 1000, -- recommended if you use tairiki as your default theme
+	},
+	{
+		"navarasu/onedark.nvim",
+		priority = 1000, -- make sure to load this before all the other start plugins
+		config = function()
+			require("onedark").setup({
+				style = "warmer",
+			})
+			-- Enable theme
+			-- require("onedark").load()
+		end,
+	},
+	{
+		"zootedb0t/citruszest.nvim",
+		lazy = false,
+		priority = 1000,
+	},
+	{
+		"uloco/bluloco.nvim",
+		lazy = false,
+		priority = 1000,
+		dependencies = { "rktjmp/lush.nvim" },
+		config = function()
+			-- your optional config goes here, see below.
+		end,
+	},
+	{
+		"ribru17/bamboo.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			require("bamboo").setup({
+				-- optional configuration here
+				style = "multiplex",
+			})
+			-- require("bamboo").load()
+		end,
+	},
+	{
+		"hat0uma/csvview.nvim",
+		---@module "csvview"
+		---@type CsvView.Options
+		opts = {
+			parser = { comments = { "#", "//" } },
+			keymaps = {
+				-- Text objects for selecting fields
+				textobject_field_inner = { "if", mode = { "o", "x" } },
+				textobject_field_outer = { "af", mode = { "o", "x" } },
+				-- Excel-like navigation:
+				-- Use <Tab> and <S-Tab> to move horizontally between fields.
+				-- Use <Enter> and <S-Enter> to move vertically between rows and place the cursor at the end of the field.
+				-- Note: In terminals, you may need to enable CSI-u mode to use <S-Tab> and <S-Enter>.
+				jump_next_field_end = { "<Tab>", mode = { "n", "v" } },
+				jump_prev_field_end = { "<S-Tab>", mode = { "n", "v" } },
+				jump_next_row = { "<Enter>", mode = { "n", "v" } },
+				jump_prev_row = { "<S-Enter>", mode = { "n", "v" } },
+			},
+		},
+		cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
+	},
 	{
 		"vague2k/vague.nvim",
 		config = function()
