@@ -111,6 +111,7 @@ vim.o.wrap = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = "a"
+vim.opt.mouse = ""
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -494,13 +495,6 @@ require("lazy").setup({
 				builtin.find_files({ cwd = vim.fn.stdpath("config") })
 			end, { desc = "[S]earch [N]eovim files" })
 		end,
-	},
-
-	{
-		"m4xshen/hardtime.nvim",
-		lazy = false,
-		dependencies = { "MunifTanjim/nui.nvim" },
-		opts = {},
 	},
 
 	{
@@ -893,7 +887,12 @@ require("lazy").setup({
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
-				clangd = {},
+				clangd = {
+					cmd = {
+						"clangd",
+						"--fallback-style={BasedOnStyle: Google, IndentWidth: 4, TabWidth: 4, UseTab: Never}",
+					},
+				},
 				gopls = {
 					capabilities = capabilities,
 					settings = {
