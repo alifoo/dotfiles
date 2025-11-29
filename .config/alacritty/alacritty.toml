@@ -11,8 +11,11 @@ chars = "\u0002"
 
 [general]
 import = [
-    "~/.config/alacritty/themes/themes/acme.toml"
+    "~/.config/alacritty/themes/pigment.toml"
 ]
+
+[env]
+TERM = "xterm-256color"
 
 [window]
 [window.padding]

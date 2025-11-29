@@ -1225,7 +1225,14 @@ require("lazy").setup({
 			-- vim.cmd.colorscheme("nvimgelion")
 		end,
 	},
-	-- Using lazy.nvim
+	{
+		"alifoo/pigment.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			require("pigment.init").colorscheme()
+		end,
+	},
 	{
 		"cpea2506/one_monokai.nvim",
 	},
@@ -1245,7 +1252,7 @@ require("lazy").setup({
 				-- ...
 			})
 
-			vim.cmd("colorscheme github_dark_tritanopia")
+			-- vim.cmd("colorscheme github_dark_tritanopia")
 		end,
 	},
 	{
