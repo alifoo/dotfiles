@@ -1,0 +1,31 @@
+[colors.primary]
+background = "#FFFFFF" # Paper (Pure White)
+foreground = "#111111" # Ink (Pure Black)
+
+[colors.cursor]
+text = "#FFFFFF"
+cursor = "#111111"
+
+[colors.selection]
+text = "#FFFFFF"
+background = "#235985" # Italian Sky
+
+[colors.normal]
+black   = "#111111" # Ink
+red     = "#C84C4C" # Russian Red
+green   = "#4C795C" # Greek Green
+yellow  = "#E4964C" # Chinese Orange
+blue    = "#235985" # Italian Sky
+magenta = "#9D93B3" # German Purple
+cyan    = "#4C9A9C" # English Teal
+white   = "#666666" # Ink Light
+
+[colors.bright]
+black   = "#585858" # Ink Light
+red     = "#B4514B" # Polish Red
+green   = "#7B966F" # Irish Green
+yellow  = "#D4B250" # Scandi Yellow
+blue    = "#336683" # Swiss Blue
+magenta = "#A08284" # German Pink
+cyan    = "#89DCEB" # Light Teal
+white   = "#E6E6E6" # Paper Dim

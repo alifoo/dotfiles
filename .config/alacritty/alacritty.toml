@@ -9,10 +9,6 @@ key = "B"
 mods = "Command"  # Use "Super" on Linux/Windows
 chars = "\u0002"
 
-[general]
-import = [
-    "~/.config/alacritty/themes/pigment.toml"
-]
 
 [env]
 TERM = "xterm-256color"

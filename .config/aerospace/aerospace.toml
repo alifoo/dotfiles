@@ -92,7 +92,7 @@ automatically-unhide-macos-hidden-apps = false
 
     # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
-    alt-enter = '''exec-and-forget open -na Alacritty'''
+    alt-enter = '''exec-and-forget open -na rio'''
     alt-q = '''exec-and-forget aerospace close'''
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
