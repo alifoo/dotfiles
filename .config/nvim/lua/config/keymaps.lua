@@ -18,7 +18,8 @@ vim.keymap.set("i", "<C-J>", 'copilot#Accept("\\<CR>")', {
 vim.g.copilot_no_tab_map = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
-vim.keymap.set("n", "<C-e>", "<cmd>Oil --float<CR>", { desc = "Open Oil file explorer normally" })
+-- vim.keymap.set("n", "<C-e>", "<cmd>Oil --float<CR>", { desc = "Open Oil file explorer normally" })
+vim.keymap.set("n", "<C-e>", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
