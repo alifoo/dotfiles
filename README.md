@@ -1,36 +1,47 @@
-3. Run the symlink commands:
+3. Use GNU Stow to symlink your configs:
 
-    For Neovim:
-    Bash
+First, ensure you have stow installed. On macOS:
+```sh
+brew install stow
+```
+On Ubuntu/Linux:
+```sh
+sudo apt-get install stow
+```
 
-ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
+Navigate to your dotfiles directory:
+```sh
+cd ~/dotfiles
+```
 
-For i3 Window Manager:
-Bash
+Then, stow each application you want to manage:
+```sh
+stow nvim
+stow i3
+stow i3status
+stow polybar
+stow alacritty
+stow aerospace
+stow tmux
+```
 
-ln -sf ~/dotfiles/.config/i3 ~/.config/i3
+This assumes your directory structure is organized with one folder per package, matching their eventual location under $HOME. For example:
 
-For i3 Status:
-Bash
+```plaintext
+~/dotfiles/
+  nvim/.config/nvim/
+  i3/.config/i3/
+  i3status/.config/i3status/
+  polybar/.config/polybar/
+  alacritty/.config/alacritty/
+  aerospace/.config/aerospace/
+  tmux/.tmux.conf
+```
 
-ln -sf ~/dotfiles/.config/i3status ~/.config/i3status
+Each subdirectory (e.g., `nvim`) mimics the structure of the files as they should appear in your home directory. To symlink a config, just run, for example:
 
-For Polybar:
-Bash
+```sh
+stow nvim
+```
 
-ln -sf ~/dotfiles/.config/polybar ~/.config/polybar
-
-For Alacritty:
-Bash
-
-ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
-
-For AeroSpace (macOS Tiling Manager):
-Bash
-
-ln -sf ~/dotfiles/.config/aerospace ~/.config/aerospace
-
-For Tmux (located at the root):
-Bash
-
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+That’s it! Your configuration files will be properly symlinked using Stow.
