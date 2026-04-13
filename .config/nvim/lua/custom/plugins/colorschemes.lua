@@ -40,7 +40,7 @@ return {
 		priority = 1000,
 		config = function()
 			vim.opt.termguicolors = true
-			vim.cmd.colorscheme("xcodelight")
+			vim.cmd.colorscheme("xcodedarkhc")
 		end,
 	},
 
